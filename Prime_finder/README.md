@@ -1,5 +1,5 @@
 编译方式：
-	把include中的头文件添加到头文件搜索路径中，然后编译即可，项目根目录下有一个可执行文件（MacBook可用）
+	把include中的头文件添加到头文件搜索路径中，然后编译即可，项目根目录下有一个可执行文件Prime_finder2（MacBook可用）
 
 算法思想：
 	首先建一个素数筛选器的对象A，调用成员方法nthPrime，在该方法内部，首先是确定一个小距离tinyN，第一轮循环计数后让最后计数值count离1亿的差距小于tinyN，即跳出第一轮循环。随后从当前筛到的数开始，到用approximate（即N/lnN）的方法估计出来的stop值之间用findNthPrime方法找出第（n-count）个素数，即为所求素数。
