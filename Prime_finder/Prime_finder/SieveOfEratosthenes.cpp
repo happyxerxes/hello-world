@@ -115,7 +115,8 @@ uint_t SieveOfEratosthenes::getSqrtStop() const
 uint64_t SieveOfEratosthenes::getByteRemainder(uint64_t n)
 {
   uint64_t r = n % NUMBERS_PER_BYTE;
-
+  if (r <= 1)
+    r += NUMBERS_PER_BYTE;
   return r;
 }
 
@@ -140,7 +141,7 @@ void SieveOfEratosthenes::crossOffMultiples()
 {
   if (eratSmall_)   eratSmall_->crossOff(sieve_, &sieve_[sieveSize_]);
   if (eratMedium_) eratMedium_->crossOff(sieve_, sieveSize_);
-
+  if (eratBig_)       eratBig_->crossOff(sieve_);
 }
 
 void SieveOfEratosthenes::sieveSegment()
@@ -151,8 +152,8 @@ void SieveOfEratosthenes::sieveSegment()
 
   // update for next segment
   uint64_t dist = sieveSize_ * NUMBERS_PER_BYTE;
-  segmentLow_ = segmentLow_+dist;
-  segmentHigh_ = segmentHigh_+dist;
+  segmentLow_ = add_overflow_safe(segmentLow_, dist);
+  segmentHigh_ = add_overflow_safe(segmentHigh_, dist);
 }
 
 /// Sieve the remaining segments after that addSievingPrime(uint_t)
@@ -160,14 +161,14 @@ void SieveOfEratosthenes::sieveSegment()
 ///
 void SieveOfEratosthenes::sieve()
 {
-    while (segmentHigh_ < stop_)
+  while (segmentHigh_ < stop_)
     sieveSegment();
 
   uint64_t remainder = getByteRemainder(stop_);
   uint64_t dist = (stop_ - remainder) - segmentLow_;
   sieveSize_ = static_cast<uint_t>(dist) / NUMBERS_PER_BYTE + 1;
   dist = sieveSize_ * NUMBERS_PER_BYTE + 1;
-  segmentHigh_ = segmentLow_+dist;
+  segmentHigh_ = add_overflow_safe(segmentLow_, dist);
 
   // sieve the last segment
   preSieve();

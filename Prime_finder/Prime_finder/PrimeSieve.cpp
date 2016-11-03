@@ -217,16 +217,17 @@ void PrimeSieve::doSmallPrime(const SmallPrime& sp)
 void PrimeSieve::sieve()
 {
   reset();
-//  if (start_ > stop_)
-//    return;
-//  double t1 = getWallTime();
-//  if (isStatus())
- //   updateStatus(INIT_STATUS);
+  if (start_ > stop_)
+    return;
+
+  double t1 = getWallTime();
+  if (isStatus())
+    updateStatus(INIT_STATUS);
 
   // small primes and k-tuplets (first prime <= 5)
   if (start_ <= 5)
   {
-//LockGuard lock(*this);
+    LockGuard lock(*this);
     for (int i = 0; i < 8; i++)
       doSmallPrime(smallPrimes_[i]);
   }
@@ -247,9 +248,9 @@ void PrimeSieve::sieve()
     finder.sieve();
   }
 
-//  seconds_ = getWallTime() - t1;
-//  if (isStatus())
-//    updateStatus(FINISH_STATUS, true);
+  seconds_ = getWallTime() - t1;
+  if (isStatus())
+    updateStatus(FINISH_STATUS, true);
 }
 
 void PrimeSieve::sieve(uint64_t start, uint64_t stop)
@@ -263,7 +264,7 @@ void PrimeSieve::sieve(uint64_t start, uint64_t stop, int flags)
 {
   setStart(start);
   setStop(stop);
-//  setFlags(flags);
+  setFlags(flags);
   sieve();
 }
 
@@ -345,7 +346,7 @@ void PrimeSieve::printSextuplets(uint64_t start, uint64_t stop)
 
 uint64_t PrimeSieve::countPrimes(uint64_t start, uint64_t stop)
 {
-  sieve(start, stop);
+  sieve(start, stop, COUNT_PRIMES);
   return getPrimeCount();
 }
 

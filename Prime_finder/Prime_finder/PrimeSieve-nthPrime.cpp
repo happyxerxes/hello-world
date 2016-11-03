@@ -143,46 +143,57 @@ uint64_t PrimeSieve::nthPrime(uint64_t n)
   return nthPrime(0, n);
 }
 
-    /****************************************************************/
-    
-    
-    
 uint64_t PrimeSieve::nthPrime(int64_t n, uint64_t start)
 {
-
   setStart(start);
+  double t1 = getWallTime();
+
+  if (n == 0)
+    n = 1; // Like Mathematica
+  else if (n > 0)
+    start = add_overflow_safe(start, 1);
+  else if (n < 0)
+    start = sub_underflow_safe(start, 1);
 
   uint64_t stop = start;
   uint64_t dist = nthPrimeDist(n, 0, start);
-
+  uint64_t nthPrimeGuess = add_overflow_safe(start, dist);
 
   int64_t count = 0;
   int64_t tinyN = 10000;
+  tinyN = max(tinyN, pix(isqrt(nthPrimeGuess)));
 
-
-  while ((n - count) > tinyN )
+  while ((n - count) > tinyN ||
+         sieveBackwards(n, count, stop))
   {
     if (count < n)
     {
- 
+      checkLimit(start);
       dist = nthPrimeDist(n, count, start);
-
-        stop = start+dist;
-
+      stop = add_overflow_safe(start, dist);
       count += countPrimes(start, stop);
-      start = stop+1;
+      start = add_overflow_safe(stop, 1);
+    }
+    if (sieveBackwards(n, count, stop))
+    {
+      checkLowerLimit(stop);
+      dist = nthPrimeDist(n, count, stop);
+      start = sub_underflow_safe(start, dist);
+      count -= countPrimes(start, stop);
+      stop = sub_underflow_safe(start, 1);
     }
   }
 
   if (n < 0)
     count -= 1;
 
-
-  dist = nthPrimeDist(n, count, start);
-  stop = start+dist;
+  checkLimit(start);
+  uint64_t overValue = 3;
+  dist = nthPrimeDist(n, count, start) * overValue;
+  stop = add_overflow_safe(start, dist);
   NthPrime np;
   np.findNthPrime(n - count, start, stop);
-
+  seconds_ = getWallTime() - t1;
 
   return np.getNthPrime();
 }

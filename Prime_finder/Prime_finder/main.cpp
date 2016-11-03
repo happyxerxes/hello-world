@@ -21,6 +21,6 @@ int main(int argc, const char * argv[]) {
     cout <<A.nthPrime(n, 1)<<endl;
     end = clock();
     dur = (double)(end - start);
-    printf("MacBook Air Intel Core i5,1 thread\nUse Time:%f\n",(dur/CLOCKS_PER_SEC));
+    cout<<"Use Time: "<<dur/CLOCKS_PER_SEC<<endl;
     return 0;
 }
